@@ -33,7 +33,7 @@ def show_image(file: str) -> None:
 def menu() -> None:
     files = get_files()
     while True:
-        print(f"Select command\n[l] - list images\n[w] - make a screenshot caputre camera and save\n[s] - show image\n[0..{len(files) - 1}] - show image\n[q] - quit")
+        print(f"Select command\n[l] - list images\n[w] - make a screenshot caputre camera and save\n[s] - show image\n[c] - convert image\n[0..{len(files) - 1}] - show image\n[q] - quit")
         command = input("> ").strip().lower()
         match command:
             case "l" | "ls":
