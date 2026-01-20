@@ -65,19 +65,20 @@ def menu() -> None:
             case "c":
                     print("[q] - back to menu")
                     print_files(files)
-                    cmd_select = input("Select file: ")
-                    if cmd_select.lower() == "q":
-                        break
-                    index = int(cmd_select)
-                    try:
-                        image = cv2.imread(f"{PATH}/{files[index]}") 
-                        if image is not None:
-                            convert_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-                            filename = f"converted_image_{time.time()}.jpeg"
-                            cv2.imwrite(f"{PATH}/{filename}", convert_image)
-                            files.append(filename)
-                    except Exception:
-                        pass
+                    while True:
+                        cmd_select = input("Select file: ")
+                        if cmd_select.lower() == "q":
+                            break
+                        index = int(cmd_select)
+                        try:
+                            image = cv2.imread(f"{PATH}/{files[index]}") 
+                            if image is not None:
+                                convert_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+                                filename = f"converted_image_{time.time()}.jpeg"
+                                cv2.imwrite(f"{PATH}/{filename}", convert_image)
+                                files.append(filename)
+                        except Exception:
+                            pass
 
             case "quit" | "q":
                 break
