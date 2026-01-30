@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 import time
 from os import listdir
 from os.path import isfile, join
@@ -20,20 +21,37 @@ def print_files(files: list[str]) -> None:
     for index, file in enumerate(files):
         print(f"[{index}] - {file}")
 
-def show_image(file: str) -> None:
-    image = cv2.imread(f"{PATH}/{file}") 
-    if image is None:
-        print("Image not Found")
-        return
-    cv2.imshow(f"{file}", image)
+def load_image(path, files) -> cv2.typing.MatLike | None:
+    index = select_file()
+    if index is None:
+        print("Can't read image")
+        return None
+    try: 
+        image = cv2.imread(f"{path}/{files[index]}")
+        if image is None:
+            return None
+        return image
+    except Exception as e:
+        print(e)
+        return None
+
+def show_image(image: cv2.typing.MatLike, title="image") -> None:
+    cv2.imshow(f"{title}", image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+
+def select_file() -> int | None:
+     cmd = input("Select file: ")
+     if cmd.lower() == "q":
+         return
+     return int(cmd)
+
 
 
 def menu() -> None:
     files = get_files()
     while True:
-        print(f"Select command\n[l] - list images\n[w] - make a screenshot caputre camera and save\n[s] - show image\n[c] - convert image\n[0..{len(files) - 1}] - show image\n[q] - quit")
+        print(f"Select command\n[l] - list images\n[w] - make a screenshot caputre camera and save\n[s] - show image\n[c] - convert image\n[blur] - blur image\n[layer] - layer image\n[edge] - edge image\n[q] - quit")
         command = input("> ").strip().lower()
         match command:
             case "l" | "ls":
@@ -51,27 +69,19 @@ def menu() -> None:
                     files.append(filename)
                     print(f"{filename} saved")
             case "s":
-                print("[q] - back to menu")
                 print_files(files)
                 while True:
-                    cmd_select = input("Select file: ")
-                    if cmd_select.lower() == "q":
-                        break
                     try:
-                        index = int(cmd_select)
-                        show_image(files[index])
+                        image = load_image(PATH, files)
+                        if image is not None:
+                            show_image(image)
                     except IndexError:
                         print("Image not Found")
             case "c":
-                    print("[q] - back to menu")
                     print_files(files)
                     while True:
-                        cmd_select = input("Select file: ")
-                        if cmd_select.lower() == "q":
-                            break
-                        index = int(cmd_select)
                         try:
-                            image = cv2.imread(f"{PATH}/{files[index]}") 
+                            image = load_image(PATH, files)
                             if image is not None:
                                 convert_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
                                 filename = f"converted_image_{time.time()}.jpeg"
@@ -80,15 +90,52 @@ def menu() -> None:
                         except Exception:
                             pass
 
+            ### START LR2 ###
+            case "layer":
+                print_files(files)
+                while True:
+                    try: 
+                        image = load_image(PATH, files)
+                        if image is None:
+                            continue
+                        mask = np.zeros(image.shape[:2], dtype="uint8")
+                        cv2.rectangle(mask, (50,50), (500, 300), 255, -1)
+                        masked_image = cv2.bitwise_and(image, image, mask=mask)
+                        show_image(masked_image, "masked_image")
+                    except Exception as e:
+                        print(e)
+            case "blur":
+                print_files(files)
+                while True:
+                    try:
+                        image = load_image(PATH, files)
+                        if image is None:
+                            continue
+                        blur = cv2.GaussianBlur(image, (5,5), 0)
+                        cv2.imshow(f"blur", blur)
+                        cv2.waitKey(0)
+                        cv2.destroyAllWindows()
+                    except Exception as e:
+                        print(e)
+
+            case "edge":
+                print_files(files)
+                while True:
+                    try:
+                        image = load_image(PATH, files)
+                        if image is None:
+                            continue
+                        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+                        edge = cv2.Canny(gray, 150, 300)
+                        show_image(edge)
+                    except Exception as e:
+                        print(e)
+
+
+            ### END LR2 ###
+
             case "quit" | "q":
                 break
-
-            case command if 0 <= int(command) <= len(files):
-                try:
-                    index = int(command)
-                    show_image(files[index])
-                except IndexError:
-                    print("Image not found")
 
 
 def main() -> None:
