@@ -102,6 +102,8 @@ def menu() -> None:
                         cv2.rectangle(mask, (50,50), (500, 300), 255, -1)
                         masked_image = cv2.bitwise_and(image, image, mask=mask)
                         show_image(masked_image, "masked_image")
+                        filename = f"layer_{time.time()}.jpeg"
+                        cv2.imwrite(f"{PATH}/{filename}", masked_image)
                     except Exception as e:
                         print(e)
             case "blur":
@@ -112,9 +114,10 @@ def menu() -> None:
                         if image is None:
                             continue
                         blur = cv2.GaussianBlur(image, (5,5), 0)
-                        cv2.imshow(f"blur", blur)
-                        cv2.waitKey(0)
-                        cv2.destroyAllWindows()
+                        show_image(blur)
+                        filename = f"blur_{time.time()}.jpeg"
+                        cv2.imwrite(f"{PATH}/{filename}", blur)
+                        print("JSADKLJAKDLSJDAKLS")
                     except Exception as e:
                         print(e)
 
@@ -128,6 +131,8 @@ def menu() -> None:
                         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
                         edge = cv2.Canny(gray, 150, 300)
                         show_image(edge)
+                        filename = f"edge_{time.time()}.jpeg"
+                        cv2.imwrite(f"{PATH}/{filename}", edge)
                     except Exception as e:
                         print(e)
 
