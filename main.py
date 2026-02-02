@@ -51,7 +51,7 @@ def select_file() -> int | None:
 def menu() -> None:
     files = get_files()
     while True:
-        print(f"Select command\n[l] - list images\n[w] - make a screenshot caputre camera and save\n[s] - show image\n[c] - convert image\n[blur] - blur image\n[layer] - layer image\n[edge] - edge image\n[q] - quit")
+        print(f"Select command\n[l] - list images\n[w] - make a screenshot caputre camera and save\n[s] - show image\n[c] - convert image\n[blur] - blur image\n[layer] - layer image\n[edge] - edge image\n[geometry] - add geometries to image\n[q] - quit")
         command = input("> ").strip().lower()
         match command:
             case "l" | "ls":
@@ -90,7 +90,6 @@ def menu() -> None:
                         except Exception:
                             pass
 
-            ### START LR2 ###
             case "layer":
                 print_files(files)
                 while True:
@@ -136,8 +135,33 @@ def menu() -> None:
                     except Exception as e:
                         print(e)
 
+            ### START LR3 ###
+            case "geometry":
+                print_files(files)
+                while True:
+                    try:
+                        image = load_image(PATH, files)
+                        if image is None: 
+                                continue
+                        start_point = (0,0)
+                        end_point = (241,351)
+                        color = (123, 255, 22)
+                        result = cv2.rectangle(image, start_point, end_point, color, cv2.FILLED)
+                        result = cv2.circle(
+                        image,
+                        (250, 250),        
+                        40,               
+                        (22, 122, 240), 
+                        2                
+                    )
 
-            ### END LR2 ###
+
+                        cv2.putText(image, "Moonshine", (50,70), cv2.FONT_HERSHEY_PLAIN, 2, (0,0,0), 2, cv2.LINE_AA)
+                        show_image(result)
+                    except Exception as e:
+                        print(e)
+
+            ### END LR3 ###
 
             case "quit" | "q":
                 break
