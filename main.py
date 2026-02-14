@@ -10,6 +10,18 @@ PATH = "./assets/"
 Path(PATH).mkdir(parents=True, exist_ok=True)
 
 
+# def reading_file(func):
+#     def inner():
+#             files = get_files()
+#             print_files(files)
+#             while True:
+#                 try:
+#                     return func()
+#                 except IndexError:
+#                     print("Image not Found")
+#     return inner
+
+
 
 def get_files() -> list[str]:
     return [f for f in listdir(PATH) if isfile(join(PATH,f))]
@@ -165,6 +177,28 @@ def menu() -> None:
 
             ### END LR3 ###
 
+            ### START LR4 ###
+            case "text":
+                print_files(files)
+                while True:
+                    try:
+                        image = load_image(PATH, files)
+                        if image is None: 
+                                continue
+                        font = cv2.FONT_HERSHEY_SIMPLEX
+                        cv2.putText(image, f'Andrii {time.strftime('%a, %d, %b, %Y %H:%M', time.gmtime())}', (10,450), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                        height, width, _ = image.shape
+                        res_image = cv2.resize(image, (width // 2, height // 2))
+                        height, width, _ = res_image.shape
+                        center = (width // 2 , height // 2)
+                        r_matrix = cv2.getRotationMatrix2D(center, 137, 0.6)
+                        rotated_image = cv2.warpAffine(res_image, r_matrix, (width, height))
+                        filename = f"text_image_{time.time()}.jpeg"
+                        cv2.imwrite(f"{PATH}/{filename}", rotated_image)
+                        show_image(rotated_image)
+                    except Exception as e:
+                        print(e)
+            ### END LR4 ###
             case "quit" | "q":
                 break
 
