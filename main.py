@@ -158,6 +158,8 @@ def menu() -> None:
 
                         cv2.putText(image, "Moonshine", (50,70), cv2.FONT_HERSHEY_PLAIN, 2, (0,0,0), 2, cv2.LINE_AA)
                         show_image(result)
+                        filename = f"geometry_image_{time.time()}.jpeg"
+                        cv2.imwrite(f"{PATH}/{filename}", result)
                     except Exception as e:
                         print(e)
 
