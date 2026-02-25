@@ -18,7 +18,7 @@ def print_files(files: list[str]) -> None:
     for index, file in enumerate(files):
         print(f"[{index}] - {file}")
 
-def reading_file(func):
+def reading_image(func):
     @functools.wraps(func)
     def inner(*args, **kwargs):
             print(func.__name__.capitalize().replace('_', ' '))

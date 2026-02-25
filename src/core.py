@@ -1,4 +1,4 @@
-from decorators import reading_file, PATH
+from decorators import reading_image, PATH
 import cv2
 import numpy as np
 import time
@@ -41,14 +41,14 @@ def write_image_command():
         print(f"{filename} saved")
 
 
-@reading_file
+@reading_image
 def show_image_command(files: None | list = None):
      image = load_image(PATH, files)
      if image is not None:
          show_image(image)
 
 
-@reading_file
+@reading_image
 def convert_image_command(files: None | list = None):
        image = load_image(PATH, files)
        if image is not None:
@@ -56,7 +56,7 @@ def convert_image_command(files: None | list = None):
            return converted_image
 
 
-@reading_file
+@reading_image
 def layer_image_command(files: None | list = None):
        image = load_image(PATH, files)
        if image is not None:
@@ -66,14 +66,14 @@ def layer_image_command(files: None | list = None):
         return masked_image
 
 
-@reading_file
+@reading_image
 def blur_image_command(files: None | list = None):
     image = load_image(PATH, files)
     if image is not None:
         blur_image = cv2.GaussianBlur(image, (5,5), 0)
         return blur_image
 
-@reading_file
+@reading_image
 def edge_image_command(files: None | list = None):
     image = load_image(PATH, files)
     if image is not None:
@@ -83,7 +83,7 @@ def edge_image_command(files: None | list = None):
         return edge_image
 
 
-@reading_file
+@reading_image
 def geometry_image_command(files: None | list = None):
     image = load_image(PATH, files)
     if image is not None: 
@@ -102,7 +102,7 @@ def geometry_image_command(files: None | list = None):
         show_image(result)
         return geometry_image
 
-@reading_file
+@reading_image
 def text_image_command(files: None | list = None):
     image = load_image(PATH, files)
     if image is not None: 
@@ -121,7 +121,7 @@ def text_image_command(files: None | list = None):
 
 ### START LR5 ####
 
-@reading_file
+@reading_image
 def shift_image_command(files=None):
     image = load_image(PATH, files)
     if image is not None: 
@@ -149,7 +149,7 @@ def shift_image_command(files=None):
 
 
 
-@reading_file
+@reading_image
 def reflect_image_command(files=None):
     image = load_image(PATH, files)
     if image is not None: 
@@ -166,3 +166,31 @@ def reflect_image_command(files=None):
 
 
 ### END LR5 ####
+
+@reading_image
+def jap_image_command(files=None):
+    image = load_image(PATH, files)
+    if image is not None:
+        # [top-left, top-right, bottom-left, bottom-right]
+        width, height = 800,  600
+        p1 = np.float32([[412, 185],[994, 245], [246, 549], [1012, 654]])
+        p2 = np.float32([[0,0], [width, 0], [0, height], [width, height]])
+        matrix = cv2.getPerspectiveTransform(p1, p2)
+        
+        result = cv2.warpPerspective(image, matrix, (width, height))
+        show_image(result)
+        return result
+
+@reading_image
+def python_image_command(files=None):
+    image = load_image(PATH, files)
+    if image is not None:
+        # [top-left, top-right, bottom-left, bottom-right]
+        width, height = 800,  600
+        p1 = np.float32([[450, 60],[1012, 216], [190, 358], [836, 640]])
+        p2 = np.float32([[0,0], [width, 0], [0, height], [width, height]])
+        matrix = cv2.getPerspectiveTransform(p1, p2)
+        
+        result = cv2.warpPerspective(image, matrix, (width, height))
+        show_image(result)
+        return result

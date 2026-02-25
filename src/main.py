@@ -18,6 +18,8 @@ def menu() -> None:
         "text": ("add text to image", text_image_command),
         "shift": ("shift image", shift_image_command),
         "reflect": ("reflect image", reflect_image_command),
+        "jap": ("japanese persepctive image", jap_image_command),
+        "py": ("python persepctive image", python_image_command),
         "q": ("quit", None),
         "quit": ("quit", None)
     }
