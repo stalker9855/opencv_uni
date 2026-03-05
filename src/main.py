@@ -2,8 +2,6 @@ from core import *
 from decorators import get_files, print_files
 
 
-
-
 def menu() -> None:
     commands = {
         "l": ("list images", lambda: print_files(get_files())),
@@ -20,8 +18,9 @@ def menu() -> None:
         "reflect": ("reflect image", reflect_image_command),
         "jap": ("japanese persepctive image", jap_image_command),
         "py": ("python persepctive image", python_image_command),
+        "stream": ("stream video", stream_video),
         "q": ("quit", None),
-        "quit": ("quit", None)
+        "quit": ("quit", None),
     }
     while True:
         print("\n--- Select command ---")
