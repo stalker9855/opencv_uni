@@ -3,17 +3,18 @@ from datetime import datetime
 
 import cv2
 import numpy as np
+import pandas as pd
 
 from decorators import PATH, reading_image
 
 
-def load_image(path, files) -> cv2.typing.MatLike | None:
+def load_image(path, files, flags: int | None = None) -> cv2.typing.MatLike | None:
     index = select_file()
     if index is None:
         print("Can't read image")
         return None
     try:
-        image = cv2.imread(f"{path}/{files[index]}")
+        image = cv2.imread(f"{path}/{files[index]}", flags)
         if image is None:
             return None
         return image
@@ -207,9 +208,6 @@ def python_image_command(files=None):
         return result
 
 
-### START LR8 ####
-
-
 def stream_video():
     cap = cv2.VideoCapture(0)
     fourcc = cv2.VideoWriter_fourcc(*"MJPG")
@@ -245,4 +243,41 @@ def stream_video():
     cv2.destroyAllWindows()
 
 
-### END LR8 ####
+### START LR9 ###
+
+
+@reading_image
+def match_template_image(files=None):
+    image = load_image(PATH, files, cv2.IMREAD_GRAYSCALE)
+    template = load_image(PATH, files, cv2.IMREAD_GRAYSCALE)
+    if image is not None and template is not None:
+        h, w = template.shape
+
+        methods = [
+            cv2.TM_CCOEFF,
+            cv2.TM_CCOEFF_NORMED,
+            cv2.TM_CCORR,
+            cv2.TM_CCORR_NORMED,
+            cv2.TM_SQDIFF,
+            cv2.TM_SQDIFF_NORMED,
+        ]
+
+        for method in methods:
+            img = image.copy()
+            result = cv2.matchTemplate(img, template, method)
+            _, _, min_loc, max_loc = cv2.minMaxLoc(result)
+            location = (
+                min_loc if method in [cv2.TM_SQDIFF, cv2.TM_SQDIFF_NORMED] else max_loc
+            )
+
+            bottom_right = (location[0] + w, location[1] + h)
+            cv2.rectangle(img, location, bottom_right, 255, 5)
+
+            show_image(img, title=f"{method.__qualname__} image")
+            threshold = 0.8
+            locations = np.where(result >= threshold)
+            df_matches = pd.DataFrame(list(zip(*locations[::-1])), columns=["x", "y"])
+            print("Знайдені координати фрагментів:")
+
+
+### END LR9 ####
