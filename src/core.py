@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 
 import cv2
 import numpy as np
@@ -206,13 +207,14 @@ def python_image_command(files=None):
         return result
 
 
-### START LR7 ####
+### START LR8 ####
 
 
 def stream_video():
     cap = cv2.VideoCapture(0)
     fourcc = cv2.VideoWriter_fourcc(*"MJPG")
     out = cv2.VideoWriter(f"{PATH}/output.avi", fourcc, 30.0, (800, 600))
+    frame_width, frame_height = 800, 600
 
     while True:
         ret, frame = cap.read()
@@ -221,7 +223,17 @@ def stream_video():
             print("Camera not found")
             break
 
-        frame = cv2.resize(frame, (800, 600))
+        frame = cv2.resize(frame, (frame_width, frame_height))
+        rect_width, rect_height = 350, 50
+        top_left = (frame_width - rect_width - 10, 10)
+        bottom_right = (frame_width - 10, 10 + rect_height)
+        cv2.rectangle(frame, top_left, bottom_right, (0, 255, 0), -1)
+
+        date_text = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        text_position = (top_left[0], top_left[1] + 30)
+        cv2.putText(
+            frame, date_text, text_position, cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2
+        )
 
         out.write(frame)
         cv2.imshow("Video", frame)
@@ -233,4 +245,4 @@ def stream_video():
     cv2.destroyAllWindows()
 
 
-### END LR7 ####
+### END LR8 ####
