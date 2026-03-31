@@ -273,11 +273,11 @@ def match_template_image(files=None):
             bottom_right = (location[0] + w, location[1] + h)
             cv2.rectangle(img, location, bottom_right, 255, 5)
 
-            show_image(img, title=f"{method.__qualname__} image")
+            show_image(img, title=f"{method} image")
             threshold = 0.8
             locations = np.where(result >= threshold)
             df_matches = pd.DataFrame(list(zip(*locations[::-1])), columns=["x", "y"])
-            print("Знайдені координати фрагментів:")
+            print(f"Знайдені координати фрагментів {method}\n", df_matches)
 
 
 ### END LR9 ####
